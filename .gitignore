@@ -1,4 +1,9 @@
-
+# Eclipse
 .project
 .cproject
 .settings/
+
+# compile
+*.o
+*.d
+reactor

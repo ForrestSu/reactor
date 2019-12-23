@@ -43,7 +43,7 @@ class promise;
 template <typename T>
 struct future_state {
     virtual ~future_state();
-    promise<T>* promise;
+    //promise<T>* promise;
     bool value_valid = false;
     bool ex_valid = false;
     union {
@@ -54,11 +54,11 @@ struct future_state {
     void set(T&& value);
     void set_exception(std::exception_ptr ex);
     T get() {
-        while (promise) {
-            promise->wait();
-        }
-        if (ex) {
-            std::rethrow_exception(ex);
+        // while (promise) {
+        //    promise->wait();
+        //}
+        if (u.ex) {
+            std::rethrow_exception(u.ex);
         }
         return std::move(u.value);
     }
@@ -114,7 +114,7 @@ public:
     template <typename Func>
     void accept(pollable_fd& listenfd, Func with_pfd_sockaddr);
 
-    future<std::unique_ptr<pollable_fd>> accept(pollable_fd& listen_fd)
+    future<std::unique_ptr<pollable_fd>> accept(pollable_fd& listen_fd);
 
     future<size_t> read_some(pollable_fd& fd, void* buffer, size_t size);
     template <typename Func>
