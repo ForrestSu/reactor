@@ -52,10 +52,18 @@ reactor::listen(socket_address sa)
 }
 
 void reactor::run() {
+    std::array<epoll_event, 128> eevt;
     while (true) {
-        std::array<epoll_event, 128> eevt;
         int nr = ::epoll_wait(_epollfd, eevt.data(), eevt.size(), -1);
-        assert(nr != -1);
+        if (nr == -1) {
+            // EINTR buy strace
+            if(errno == EINTR) {
+                printf("epoll_wait() interrupted 4!\n");
+                continue;
+            }
+            printf("epoll_wait() errno %d<%s>!\n", errno, strerror(errno));
+            break;
+        }
         for (int i = 0; i < nr; ++i) {
             auto& evt = eevt[i];
             auto pfd = reinterpret_cast<pollable_fd*>(evt.data.ptr);
