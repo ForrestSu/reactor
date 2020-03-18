@@ -66,7 +66,7 @@ void reactor::run() {
         }
         for (int i = 0; i < nr; ++i) {
             auto& evt = eevt[i];
-            auto pfd = reinterpret_cast<pollable_fd*>(evt.data.ptr);
+            auto pfd = static_cast<pollable_fd*>(evt.data.ptr);
             auto events = evt.events;
             if (events & EPOLLIN) {
                 auto t = std::move(pfd->pollin);
